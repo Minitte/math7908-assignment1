@@ -30,8 +30,33 @@ namespace math7908_assignment1
                 return Determinant2x2(a);
             }
 
-            return -999999999f; // TODO
+            float sum = 0;
 
+            float[][,] minors = LineMinors(a);
+
+            int i = 0;
+
+            foreach (float[,] minor in minors)
+            {
+                sum += a[0, i] * CheckerBoard(0, i) * Determinant(minor);
+
+                i++;
+            }
+
+            return sum;
+
+        }
+
+        /// <summary>
+        /// Checker board pattern
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float CheckerBoard(int row, int col)
+        {
+            return (float)Math.Pow(-1, row + col);
         }
 
         /// <summary>
@@ -43,6 +68,25 @@ namespace math7908_assignment1
         public static float Determinant2x2(float[,] a)
         {
             return (a[0, 0] * a[1, 1]) - (a[1, 0] * a[0, 1]);
+        }
+
+        /// <summary>
+        /// Gets all of the minors of the first row
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        public static float[][,] LineMinors(float[,] a)
+        {
+            int size = a.GetLength(0);
+
+            float[][,] minors = new float[size][,];
+
+            for (int i = 0; i < size; i++)
+            {
+                minors[i] = Minor(a, 0, i);
+            }
+
+            return minors;
         }
 
         /// <summary>
