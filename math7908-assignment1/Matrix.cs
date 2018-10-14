@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
+using System.Runtime.CompilerServices;
+
 using System.Diagnostics;
 
 namespace math7908_assignment1
@@ -10,6 +12,85 @@ namespace math7908_assignment1
     {
 
         private Matrix() { }
+
+        /// <summary>
+        /// Finds the Determinant of the matrix.
+        /// Must be square
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        public static float Determinant(float[,] a)
+        {
+            Debug.Assert(a.GetLength(0) == a.GetLength(1), "Determinant: matrix not square!");
+
+            int size = a.GetLength(0);
+
+            if (size == 2)
+            {
+                return Determinant2x2(a);
+            }
+
+            return -999999999f; // TODO
+
+        }
+
+        /// <summary>
+        /// Determinant of a 2x2 matrix
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Determinant2x2(float[,] a)
+        {
+            return (a[0, 0] * a[1, 1]) - (a[1, 0] * a[0, 1]);
+        }
+
+        /// <summary>
+        /// Returns the minor of matrix a
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        /// <returns></returns>
+        public static float[,] Minor(float[,] a, int row, int col)
+        {
+            Debug.Assert(a.GetLength(0) == a.GetLength(1), "Minor: matrix not square!");
+
+            int size = a.GetLength(0);
+
+            // minor matrix
+            float[,] m = new float[size - 1, size - 1];
+
+            // minor index
+            int mi = 0;
+            int mj = 0;
+
+            for (int i = 0; i < size; i++)
+            {
+                // skip if on same row
+                if (i == row)
+                {
+                    continue;
+                }
+
+                for (int j = 0; j < size; j++)
+                {
+                    // skip if on same column
+                    if (j == col)
+                    {
+                        continue;
+                    }
+
+                    m[mi, mj] = a[i, j];
+                    mj++;
+                }
+
+                mj = 0;
+                mi++;
+            }
+
+            return m;
+        }
 
         /// <summary>
         /// Multiples first and second matrix together if compatitable
