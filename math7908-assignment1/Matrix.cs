@@ -14,6 +14,22 @@ namespace math7908_assignment1
         private Matrix() { }
 
         /// <summary>
+        /// Inverse a square matrix
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        public static float[,] Inverse(float[,] a)
+        {
+            Debug.Assert(a.GetLength(0) == a.GetLength(1), "Inverse: matrix not square!");
+
+            float det = Determinant(a);
+
+            float[,] adj = Adjugate(a);
+
+            return Multiply(adj, 1f / det);
+        }
+
+        /// <summary>
         /// Finds the Determinant of the matrix.
         /// Must be square
         /// </summary>
@@ -21,8 +37,6 @@ namespace math7908_assignment1
         /// <returns></returns>
         public static float Determinant(float[,] a)
         {
-            Debug.Assert(a.GetLength(0) == a.GetLength(1), "Determinant: matrix not square!");
-
             int size = a.GetLength(0);
 
             if (size == 2)
@@ -32,7 +46,7 @@ namespace math7908_assignment1
 
             float sum = 0;
 
-            float[][,] minors = LineMinors(a);
+            float[][,] minors = LineMinors(a, 0);
 
             int i = 0;
 
@@ -44,7 +58,30 @@ namespace math7908_assignment1
             }
 
             return sum;
+        }
 
+        /// <summary>
+        /// Calculates the Adjugate matrix
+        /// </summary>
+        /// <param name="a">Untranposed matrix</param>
+        /// <returns></returns>
+        public static float[,] Adjugate(float[,] a)
+        {
+            float[,] t = Transpose(a);
+
+            float[,] adj = new float[t.GetLength(0), t.GetLength(0)];
+
+            for (int i = 0; i < t.GetLength(0); i++)
+            {
+                float[][,] minors = LineMinors(t, i);
+
+                for (int j = 0; j < t.GetLength(0); j++)
+                {
+                    adj[i, j] = Determinant(minors[j]) * CheckerBoard(i, j);
+                }
+            }
+
+            return adj;
         }
 
         /// <summary>
@@ -75,7 +112,7 @@ namespace math7908_assignment1
         /// </summary>
         /// <param name="a"></param>
         /// <returns></returns>
-        public static float[][,] LineMinors(float[,] a)
+        public static float[][,] LineMinors(float[,] a, int row)
         {
             int size = a.GetLength(0);
 
@@ -83,7 +120,7 @@ namespace math7908_assignment1
 
             for (int i = 0; i < size; i++)
             {
-                minors[i] = Minor(a, 0, i);
+                minors[i] = Minor(a, row, i);
             }
 
             return minors;
@@ -159,6 +196,27 @@ namespace math7908_assignment1
                         result[i, j] += first[i, x] * second[x, j];
                     }
 
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Multiplies the matrix with a scale/scalar
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="scale"></param>
+        /// <returns></returns>
+        public static float[,] Multiply(float[,] m, float scale)
+        {
+            float[,] result = new float[m.GetLength(0), m.GetLength(1)];
+
+            for (int i = 0; i < m.GetLength(0); i++)
+            {
+                for (int j = 0; j < m.GetLength(1); j++)
+                {
+                    result[i, j] = m[i, j] * scale;
                 }
             }
 
