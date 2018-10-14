@@ -166,6 +166,26 @@ namespace math7908_assignment1
         }
 
         /// <summary>
+        /// Transposes the matrix
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        public static float[,] Transpose(float[,] a)
+        {
+            float[,] t = new float[a.GetLength(1), a.GetLength(0)];
+
+            for (int i = 0; i < a.GetLength(0); i++)
+            {
+                for (int j = 0; j < a.GetLength(1); j++)
+                {
+                    t[j, i] = a[i, j];
+                }
+            }
+
+            return t;
+        }
+
+        /// <summary>
         /// Converts the matrix to a more readable form
         /// </summary>
         /// <param name="m"></param>

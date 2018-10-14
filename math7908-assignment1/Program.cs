@@ -6,9 +6,33 @@ namespace math7908_assignment1
     {
         static void Main(string[] args)
         {
-            TestDeterminant();
+            TestTranspose();
 
             Console.ReadKey();
+        }
+
+        public static void TestTranspose()
+        {
+            float[,] m1 = new float[3, 3];
+
+            m1[0, 0] = 15;
+            m1[0, 1] = 22;
+            m1[0, 2] = 31;
+
+            m1[1, 0] = 47;
+            m1[1, 1] = 52;
+            m1[1, 2] = 62;
+
+            m1[2, 0] = 76;
+            m1[2, 1] = 83;
+            m1[2, 2] = 95;
+
+            float[,] t = Matrix.Transpose(m1);
+
+            Console.WriteLine(Matrix.ToString(m1));
+            Console.WriteLine();
+
+            Console.WriteLine(Matrix.ToString(t));
         }
 
         public static void TestDeterminant()
