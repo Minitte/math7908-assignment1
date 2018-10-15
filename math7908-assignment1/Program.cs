@@ -1,166 +1,137 @@
 ﻿using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace math7908_assignment1
 {
     class Program
     {
+
         static void Main(string[] args)
         {
-            InverseTest();
+            string fileName = "./data/mq4data17.csv";
+
+            Console.WriteLine("Reading from " + fileName + "...");
+
+            List<MatrixInputData> dataSets = ReadFileInput(fileName);
+
+            Console.WriteLine("Found " + dataSets.Count + " data sets:");
+
+            for (int i = 0; i < dataSets.Count; i++)
+            {
+                Console.WriteLine("{0}) {1}x{2}", i + 1, dataSets[i].matrix.GetLength(0), dataSets[i].matrix.GetLength(1));
+            }
+
+            Console.WriteLine("===================");
+
+            for (int i = 0; i < 3; i++)
+            {
+                Console.WriteLine();
+
+                SolveMatrix(dataSets[i]);
+
+                Console.WriteLine();
+            }
 
             Console.ReadKey();
         }
 
-        public static void InverseTest()
+        private static string FormatAsQuizAnswer(float[,] m)
         {
-            float[,] m1 = new float[3, 3];
+            string s = "";
 
-            m1[0, 0] = 15;
-            m1[0, 1] = 22;
-            m1[0, 2] = 31;
+            s += "[";
 
-            m1[1, 0] = 47;
-            m1[1, 1] = 52;
-            m1[1, 2] = 62;
-
-            m1[2, 0] = 76;
-            m1[2, 1] = 83;
-            m1[2, 2] = 95;
-
-            float[,] inverse = Matrix.Inverse(m1);
-
-            // should be identity matrix
-            float[,] m2 = Matrix.Multiply(inverse, m1);
-
-            Console.WriteLine(Matrix.ToString(m1));
-            Console.WriteLine();
-
-            Console.WriteLine(Matrix.ToString(inverse));
-            Console.WriteLine();
-
-            Console.WriteLine(Matrix.ToString(m2));
-            Console.WriteLine();
-        }
-
-        public static void TestAdjugate()
-        {
-            float[,] m1 = new float[3, 3];
-
-            m1[0, 0] = 15;
-            m1[0, 1] = 22;
-            m1[0, 2] = 31;
-
-            m1[1, 0] = 47;
-            m1[1, 1] = 52;
-            m1[1, 2] = 62;
-
-            m1[2, 0] = 76;
-            m1[2, 1] = 83;
-            m1[2, 2] = 95;
-
-            float[,] adj = Matrix.Adjugate(m1);
-
-            Console.WriteLine(Matrix.ToString(m1));
-            Console.WriteLine();
-
-            Console.WriteLine(Matrix.ToString(adj));
-        }
-
-        public static void TestTranspose()
-        {
-            float[,] m1 = new float[3, 3];
-
-            m1[0, 0] = 15;
-            m1[0, 1] = 22;
-            m1[0, 2] = 31;
-
-            m1[1, 0] = 47;
-            m1[1, 1] = 52;
-            m1[1, 2] = 62;
-
-            m1[2, 0] = 76;
-            m1[2, 1] = 83;
-            m1[2, 2] = 95;
-
-            float[,] t = Matrix.Transpose(m1);
-
-            Console.WriteLine(Matrix.ToString(m1));
-            Console.WriteLine();
-
-            Console.WriteLine(Matrix.ToString(t));
-        }
-
-        public static void TestDeterminant()
-        {
-            float[,] m1 = new float[3, 3];
-
-            m1[0, 0] = 15;
-            m1[0, 1] = 22;
-            m1[0, 2] = 31;
-
-            m1[1, 0] = 47;
-            m1[1, 1] = 52;
-            m1[1, 2] = 62;
-
-            m1[2, 0] = 76;
-            m1[2, 1] = 83;
-            m1[2, 2] = 95;
-
-            float det = Matrix.Determinant(m1);
-
-            Console.WriteLine(Matrix.ToString(m1));
-            Console.WriteLine();
-
-            Console.WriteLine(det);
-        }
-
-        public static void TestMinor()
-        {
-            float[,] m1 = new float[3, 3];
-
-            m1[0, 0] = 15;
-            m1[0, 1] = 22;
-            m1[0, 2] = 31;
-
-            m1[1, 0] = 47;
-            m1[1, 1] = 52;
-            m1[1, 2] = 62;
-
-            m1[2, 0] = 76;
-            m1[2, 1] = 83;
-            m1[2, 2] = 95;
-
-            float[][,] minors = Matrix.LineMinors(m1, 0);
-
-            Console.WriteLine(Matrix.ToString(m1));
-            Console.WriteLine();
-
-            foreach (float[,] minor in minors)
+            for (int i = 0; i < m.GetLength(0); i++)
             {
-                Console.WriteLine(Matrix.ToString(minor));
-                Console.WriteLine();
+                for (int j = 0; j < m.GetLength(1); j++)
+                {
+                    s += (int) Math.Round(m[i, j]);
+
+                    if (i != m.GetLength(0) - 1)
+                    {
+                        s += ",";
+                    }
+                }
             }
+
+            s += "]";
+
+            return s;
         }
 
-        public static void TestMultiply()
+        private static void SolveMatrix(MatrixInputData input)
         {
-            float[,] m1 = new float[2, 2];
+            Console.WriteLine("Processing {0}x{1}...", input.matrix.GetLength(0), input.matrix.GetLength(1));
 
-            m1[0, 0] = 5;
-            m1[0, 1] = 1;
-            m1[1, 0] = 7;
-            m1[1, 1] = 2;
+            Stopwatch watch = Stopwatch.StartNew();
 
-            float[,] m2 = new float[2, 2];
+            float[,] inverse = Matrix.Inverse(input.matrix);
 
-            m2[0, 0] = 8;
-            m2[0, 1] = 2;
-            m2[1, 0] = 6;
-            m2[1, 1] = 4;
+            float[,] answer = Matrix.Multiply(inverse, input.rhs);
 
-            float[,] m3 = Matrix.Multiply(m1, m2);
+            watch.Stop();
 
-            Console.WriteLine(Matrix.ToString(m3));
+            Console.WriteLine("Answer=\n" + FormatAsQuizAnswer(answer));
+
+            Console.WriteLine("Finished in " + watch.ElapsedMilliseconds + "ms");
+        }
+
+        private static List<MatrixInputData> ReadFileInput(string fileName)
+        {
+            List<MatrixInputData> dataSets = new List<MatrixInputData>();
+
+            StreamReader stream = new StreamReader(fileName);
+
+            string line;
+
+            while ((line = stream.ReadLine()) != null)
+            {
+                if (line[0] == '#')
+                {
+                    // convert to numbers ... example: "#4x4" -> "4x4" -> ["4", "4"]
+                    string[] size = line.Substring(1).Split('x');
+
+                    int rows = int.Parse(size[0]);
+
+                    int cols = int.Parse(size[0]);
+
+                    MatrixInputData data = new MatrixInputData();
+
+                    data.matrix = new float[rows, cols];
+
+                    data.rhs = new float[rows, 1];
+
+                    // read data 
+                    for (int i = 0; i < rows; i++)
+                    {
+                        line = stream.ReadLine();
+
+                        string[] values = line.Split(','); 
+
+                        // read entire row matrix values
+                        for (int j = 0; j < cols; j++)
+                        {
+                            data.matrix[i, j] = float.Parse(values[j]);
+                        }
+
+                        // read the last column as rhs
+                        data.rhs[i, 0] = float.Parse(values[cols]);
+                    }
+
+                    dataSets.Add(data);
+                }
+            }
+
+            return dataSets;
+        }
+
+        private class MatrixInputData
+        {
+            public float[,] matrix;
+
+            public float[,] rhs;
         }
     }
 }
