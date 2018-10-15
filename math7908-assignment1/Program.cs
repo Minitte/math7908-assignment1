@@ -25,7 +25,7 @@ namespace math7908_assignment1
 
             Console.WriteLine("===================");
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 4; i++)
             {
                 Console.WriteLine();
 
@@ -67,13 +67,15 @@ namespace math7908_assignment1
 
             Stopwatch watch = Stopwatch.StartNew();
 
-            float[,] inverse = Matrix.Inverse(input.matrix);
+            float[,] inverse = new PerformanceMatrix().Inverse(input.matrix);
 
             float[,] answer = Matrix.Multiply(inverse, input.rhs);
 
             watch.Stop();
 
-            Console.WriteLine("Answer=\n" + FormatAsQuizAnswer(answer));
+            Console.WriteLine();
+
+           Console.WriteLine("Answer=\n" + FormatAsQuizAnswer(answer));
 
             Console.WriteLine("Finished in " + watch.ElapsedMilliseconds + "ms");
         }
