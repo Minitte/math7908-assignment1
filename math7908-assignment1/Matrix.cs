@@ -52,7 +52,10 @@ namespace math7908_assignment1
 
             foreach (float[,] minor in minors)
             {
-                sum += a[0, i] * CheckerBoard(0, i) * Determinant(minor);
+                if (a[0, i] != 0)
+                {
+                    sum += a[0, i] * CheckerBoard(0, i) * Determinant(minor);
+                }
 
                 i++;
             }
